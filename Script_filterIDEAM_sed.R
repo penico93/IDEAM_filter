@@ -184,7 +184,7 @@ for(i in 1:length(val_med)){
   
   station <- substr(text,105,112)
   
-  name1 <- paste(c("conc_med_di_",year,"_",station,".txt"),collapse = '')
+  name1 <- paste(c("conc_med_di_",station,year,"_",".txt"),collapse = '')
   
   vd = c(getwd(),'/',"filtered files",'/')
   directory = paste(vd,collapse = '')

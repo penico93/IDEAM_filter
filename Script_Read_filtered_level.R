@@ -3,9 +3,9 @@
 setwd("E:/Sedimentology/Project FINAL/Rproject/Rdirectory/filtered files/")
 
 #patter with specific station code, they will be arranged by age already!
-filenames <- list.files(pattern="*25027640")
+filenames <- list.files(pattern="level_med_di_27037010*")
 
-station = 25027640
+station = 27037010
 
 # to obtain the age from the file one can do the following. For example for 1966 which is in the position 1 of the filenames list
 
@@ -20,7 +20,7 @@ count = 0
 
 for(h in 1:length(filenames)){
   
-  year <- substr(filenames[h],13,16)
+  year <- substr(filenames[h],23,26)
   
   data <- read.table(filenames[h])
   
@@ -47,7 +47,7 @@ for(h in 1:length(filenames)){
 
 
 
-name1 <- paste(c(station,"caudales_diarios",".txt"),collapse = '')
+name1 <- paste(c(station,"_niveles_diarios",".txt"),collapse = '')
 
 write.table(A, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
 
