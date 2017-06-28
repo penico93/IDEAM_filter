@@ -1,6 +1,7 @@
 #Script to read the previously generated filtered files and produce 1 table with all the data per locality
 
-setwd("E:/Sedimentology/Project FINAL/Rproject/Rdirectory/filtered files/")
+setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
+
 
 library(ggplot2)
 library(grid)
@@ -39,7 +40,7 @@ breik = as.Date(c("2001_01_01","2002_01_01","2003_01_01","2004_01_01",
                   "2009_01_01","2010_01_01","2011_01_01","2012_01_01",
                   "2013_01_01","2014_01_01","2015_01_01"), "%Y_%m_%d")
 
-xlimites = as.Date(c("1966_01_01","2015_01_01"), "%Y_%m_%d")
+xlimites = as.Date(c("1975_01_01","2014_01_01"), "%Y_%m_%d")
 
 
 #caudales_25027050
@@ -47,10 +48,49 @@ xlimites = as.Date(c("1966_01_01","2015_01_01"), "%Y_%m_%d")
 
 caudales_25027050 <- read.table("25027050caudales_diarios.txt",sep ="\t")
 
-caudales_25027050 <- caudales_25027050[-1,]
+for(i in 1:length(caudales_25027050$V4)){
+  
+  if(is.na(caudales_25027050$V4[i]) == TRUE){
+    
+    caudales_25027050$V4[i] = 5000
+  }
+  
+  
+}
 
-caudales_25027050 <- caudales_25027050[caudales_25027050$V1>1960,]
+
+caudales_25027050 <- na.omit(caudales_25027050)
+
+caudales_25027050 <- caudales_25027050[caudales_25027050$V1>1975,]
+
 caudales_25027050$V3 <- as.Date(caudales_25027050$V3, "%Y_%m_%d")
+
+# a sequence of all the years in  2011
+dates.2011 <- seq( as.Date("2011-01-01"), as.Date("2011-12-31"), by="+1 day")
+
+# a dataframe of four columns and length(dates.2011) or 365 number of rows
+df.2011 <- data.frame(matrix(ncol = 4, nrow = length(dates.2011)))
+
+for(d in 1:length(dates.2011)){
+  
+  df.2011[d,1] <- 2011
+  df.2011[d,2] <- d
+  df.2011[d,3] <- toString(dates.2011[d])
+  df.2011[d,4] <- 5000
+  
+}
+
+
+
+colnames(df.2011) <- colnames(caudales_25027050)
+
+caudales_25027050 <- rbind(caudales_25027050,df.2011)
+
+
+
+
+
+
 
 
 
@@ -74,6 +114,7 @@ caudales_25027270 <- caudales_25027270[-1,]
 
 caudales_25027270 <- caudales_25027270[caudales_25027270$V1>1960,]
 caudales_25027270$V3 <- as.Date(caudales_25027270$V3, "%Y_%m_%d")
+
 
 
 
@@ -184,6 +225,9 @@ dif_caudal_plot
 #multiplot(caudales_26247030_plot, caudales_25027050_plot,  caudales_25027270_plot,caudales_25027640_plot ,cols=1)
 
 #,caudales_27037010_plot
+
+
+
 
 multiplot(caudales_25027050_plot,  caudales_25027270_plot,caudales_25027640_plot ,cols=1)
 
