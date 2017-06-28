@@ -1,23 +1,19 @@
-#Read the filtered files of level data
+#Read filtered files of transported sediment
+
 
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
 
-
-files = c("25027640","25027050","27037010","26247030","25027270","25027070","25027160","25027240")
-
+files = c("25027640","25027050","27037010","26247030","25027270")
 
 for(k in 1: length(files)){
   
   #patter with specific station code, they will be arranged by age already!
-  filenames <- list.files(pattern= paste( c("^level_med_di_",files[k]), collapse="" ))
+  filenames <- list.files(pattern= paste( c("^trans_sed_susp_diario_",files[k]), collapse="" ))
 
-  
-  
-  
   # to obtain the age from the file one can do the following. For example for 1966 which is in the position 1 of the filenames list
   
-  substr(filenames[1],13,16)
+#  substr(filenames[1],13,16)
   
   A <- data.frame(matrix(ncol = 4, nrow = 1))
   
@@ -28,7 +24,7 @@ for(k in 1: length(files)){
   
   for(h in 1:length(filenames)){
     
-    year <- substr(filenames[h],23,26)
+    year <- substr(filenames[h],32,35)
     
     data <- read.table(filenames[h])
     
@@ -55,21 +51,10 @@ for(k in 1: length(files)){
   
   
   station <- files[k]
-  name1 <- paste(c(station,"_niveles_diarios",".txt"),collapse = '')
+  name1 <- paste(c(station,"trans_sed_diario",".txt"),collapse = '')
   
   write.table(A, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
   
-  
-  A.subset <- A[A$X1>2000,]
-  
-  A.subset$X3 <- as.Date(A.subset$X3, "%Y_%m_%d")
-  
-  plot(A.subset$X3,A.subset$X4, t="p")
-  
-  
-  
-  
-
   
   
   

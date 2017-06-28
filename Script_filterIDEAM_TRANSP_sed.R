@@ -1,5 +1,5 @@
-#Scirpt to filter ideam data
-#R code for filtering files of U-Pb detrital Zircon dating on the repository specified below
+#Scirpt to filtering ideam data of TRANSPORTE DIARIO DE MATERIALES EN SUSPENSION
+
 library("WriteXLS")
 library("gtools")
 library("plyr")
@@ -7,8 +7,6 @@ library("qpcR")
 
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data")
-
-#E:\Sedimentology\R hydrology\Rdirectory\Data
 
 outputdirectory <-getwd()
 
@@ -20,17 +18,15 @@ for(k in 1:length(files)){
   
   #filenames <- list.files(pattern="*.csv")
   all_data <- readLines(files[k])
-  #all_data <- readLines("NICOLPERECONSUEG")
+  
   
   #find all the lines with the word IDEAM
   
   grep("I D E A M", all_data)
   
-  val_med <- grep("VALORES MEDIOS  DIARIOS DE CAUDALES ",all_data)
+  val_med <- grep("TRANSPORTE DIARIO DE MATERIALES EN SUSPENSION",all_data)
   
-  all_data[val_med[1] + 12]
   
-  all_data[val_med[1] + 42]
   
   
   #This loop goes step by step into all of the parts of the file that have val_med
@@ -175,6 +171,7 @@ for(k in 1:length(files)){
       }
       
       
+      
     }
     
     #here write a line to convert all a into numeric values with as.numeric(object)
@@ -194,7 +191,7 @@ for(k in 1:length(files)){
     
     station <- substr(text,105,112)
     
-    name1 <- paste(c("caud_med_di_",station,"_",year,".txt"),collapse = '')
+    name1 <- paste(c("trans_sed_susp_diario_",station,"_",year,".txt"),collapse = '')
     
     vd = c(getwd(),'/',"filtered files",'/')
     directory = paste(vd,collapse = '')
@@ -206,9 +203,6 @@ for(k in 1:length(files)){
     
     
   }
-  
-  
-  
   
   
 }
