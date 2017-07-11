@@ -1,5 +1,4 @@
-# New plots
-# https://cran.rstudio.com/web/packages/hydroTSM/hydroTSM.pdf
+# This script takes the corrected-filled water discharge data of two stations and generates a plot
 
 
 library(ggplot2)
@@ -56,10 +55,10 @@ colnames(data.dis.25027270) <- c("Date","Discharge")
 data.zoo <- read.zoo(data.dis.25027270, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 
 #exploratory plots of the hydrological data
-hydroplot(data.zoo,FUN=mean)
-
-# Create plots of daily and month data
-hydroplot(data.zoo,FUN=mean,ptype = 'ts',pfreq ="dm",tick.tstep="years", lab.tstep="years",lab.fmt= "%Y")
+# hydroplot(data.zoo,FUN=mean)
+# 
+# # Create plots of daily and month data
+# hydroplot(data.zoo,FUN=mean,ptype = 'ts',pfreq ="dm",tick.tstep="years", lab.tstep="years",lab.fmt= "%Y")
 
 #convert to montly data by summing or obtaining the mean all the data from the days
 m <- daily2monthly(data.zoo, FUN=mean, na.rm=TRUE, date.fmt= "%Y-%m-%d")
@@ -69,7 +68,7 @@ cmonth <- format(time(m), "%B")
 cmonth <- factor(cmonth,  levels=c("January", "February", "March","April","May","June","July","August","September","October","November","December"))
 
 #Boxplot of the monthly water discharge data
-boxplot(coredata(m) ~ cmonth, col="lightblue", main="ML/month")
+# boxplot(coredata(m) ~ cmonth, col="lightblue", main="ML/month")
 
 
 #Create a dataframe of discharge data and organize data to plot
@@ -153,14 +152,15 @@ discharge.df <- rbind(discharge.df,discharge.df.stat)
 
 
 p1 <- ggplot(data = discharge.df[discharge.df$year %in% c(1999,2000,2008,2009,2010,2011,2012),] ,aes(x=month,y=discharge, colour = factor(year), group=year)) + geom_line(size=0.8)+
-  geom_line(color = "black",data = discharge.df[discharge.df$year %in% c(1,2,3),] ,aes(x=month,y=discharge),linetype="dotted",size=0.8)+
-  theme(text = element_text(size=8), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(),panel.border = element_rect(colour="black", fill=NA, size=1),axis.text.x = element_text(angle = 90, hjust = 1))+
+  geom_line(color = "black",data = discharge.df[discharge.df$year %in% c(1,2,3),] ,aes(x=month,y=discharge),linetype="dotted",size=0.5)+
+  theme(legend.key=element_blank(),legend.position='none',text = element_text(size=8), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(),panel.border = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"), axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black"),axis.text.x = element_text(size=9,angle = 0, hjust = 0.5,face = "bold"))+
   ggtitle("Mean monthly water discharge")+
-  xlab("Month") + ylab("Water discharge ("~"m"^"3"*"/s)")+
-  scale_x_discrete(limits = c("January", "February", "March","April","May","June","July","August","September","October","November","December"))+
+   xlab("")+ ylab("Water discharge ("~"m"^"3"*"/s)")+
+  scale_x_discrete(limits = c("Jan", "Feb", "March","April","May","June","July","Aug","Sept","Oct","Nov","Dec"))+
   annotate("text", x = 2, y = 4000,
-           label = "Station 25027270 \n Las Flores \n Cauca river", size =2)
+           label = "Station 25027270 \n Las Flores \n Cauca river", size =2)+
+  scale_colour_manual(values =c('gray65','springgreen3','saddlebrown','midnightblue','mediumvioletred','olivedrab','steelblue1'))
 
 
 
@@ -184,10 +184,10 @@ colnames(data.dis.25027050) <- c("Date","Discharge")
 data.zoo <- read.zoo(data.dis.25027050, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 
 #exploratory plots of the hydrological data
-hydroplot(data.zoo,FUN=mean)
+#hydroplot(data.zoo,FUN=mean)
 
 # Create plots of daily and month data
-hydroplot(data.zoo,FUN=mean,ptype = 'ts',pfreq ="dm",tick.tstep="years", lab.tstep="years",lab.fmt= "%Y")
+#hydroplot(data.zoo,FUN=mean,ptype = 'ts',pfreq ="dm",tick.tstep="years", lab.tstep="years",lab.fmt= "%Y")
 
 #convert to montly data by summing or obtaining the mean all the data from the days
 m <- daily2monthly(data.zoo, FUN=mean, na.rm=TRUE, date.fmt= "%Y-%m-%d")
@@ -197,7 +197,7 @@ cmonth <- format(time(m), "%B")
 cmonth <- factor(cmonth,  levels=c("January", "February", "March","April","May","June","July","August","September","October","November","December"))
 
 #Boxplot of the monthly water discharge data
-boxplot(coredata(m) ~ cmonth, col="lightblue", main="ML/month")
+#boxplot(coredata(m) ~ cmonth, col="lightblue", main="ML/month")
 
 
 #Create a dataframe of discharge data and organize data to plot
@@ -281,31 +281,39 @@ discharge.df <- rbind(discharge.df,discharge.df.stat)
 
 
 p2 <- ggplot(data = discharge.df[discharge.df$year %in% c(1999,2000,2008,2009,2010,2011,2012),] ,aes(x=month,y=discharge, colour = factor(year), group=year)) + geom_line(size=0.8)+
-    geom_line(color = "black",data = discharge.df[discharge.df$year %in% c(1,2,3),] ,aes(x=month,y=discharge),linetype="dotted",size=0.8)+
-    theme(text = element_text(size=8), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background = element_blank(),panel.border = element_rect(colour="black", fill=NA, size=1),axis.text.x = element_text(angle = 90, hjust = 1))+
+    geom_line(color = "black",data = discharge.df[discharge.df$year %in% c(1,2,3),] ,aes(x=month,y=discharge),linetype="dotted",size=0.5)+
+  theme(legend.key=element_blank(),legend.position='none',text = element_text(size=8), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(),panel.border = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"), axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black"),axis.text.x = element_text(size=9,angle = 0, hjust = 0.5,face = "bold"))+
     ggtitle("Mean monthly water discharge")+
-    xlab("Month") + ylab("Water discharge ("~"m"^"3"*"/s)")+
-    scale_x_discrete(limits = c("January", "February", "March","April","May","June","July","August","September","October","November","December"))+
+     xlab("")+ ylab("Water discharge ("~"m"^"3"*"/s)")+
+  scale_x_discrete(limits = c("Jan", "Feb", "March","April","May","June","July","Aug","Sept","Oct","Nov","Dec"))+
     annotate("text", x = 2, y = 3000,
-           label = "Station 25027050 \n Margento \n Cauca river", size =2)
+           label = "Station 25027050 \n Margento \n Cauca river", size =2)+
+  scale_colour_manual(values =c('gray65','springgreen3','saddlebrown','midnightblue','mediumvioletred','olivedrab','steelblue1'))
+
+
+
+  
+#Ayapel levels obtain by Augusto
+data.level <- read.table('ayapel_levels.txt', header = TRUE)
+data.level$date <- as.Date(data.level$date, "%d/%m/%Y")
+
+
+
+p3 <- ggplot(data = data.level[data.level$year %in% c(1999,2000,2008,2009,2010,2011,2012),] ,aes(x=month,y=level, colour = factor(year), group=year)) + geom_line(size=0.8)+
+  theme(legend.key=element_blank(),legend.position=c(.9,.5),text = element_text(size=8), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(),panel.border = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"), axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black"),axis.text.x = element_text(size=9,angle = 0, hjust = 0.5,face = "bold"))+
+  ggtitle("Mean monthly wetland water Level")+
+   xlab("")+ ylab("Ayapel Wetland level (cms)")+
+  scale_x_discrete(limits = c("Jan", "Feb", "March","April","May","June","July","Aug","Sept","Oct","Nov","Dec"))+
+  scale_colour_manual(values =c('gray65','springgreen3','saddlebrown','midnightblue','mediumvioletred','olivedrab','steelblue1'))
+
+  #legend.position=c(.8,.15)
   
   
-  
-  
-  
-  
-pdf("mean_monthly_cauca.pdf", width=8.27, height=5)
-multiplot(p1,p2,cols = 1)
+pdf("mean_monthly_cauca.pdf", width=8.27, height=9)
+multiplot(p1,p2,p3,cols = 1)
 dev.off()
-
-
-
-
-
-
-
-
 
 
 

@@ -1,6 +1,7 @@
 #Script to read the previously generated filtered files and produce 1 table with all the data per locality
 
-setwd("E:/Sedimentology/Project FINAL/Rproject/Rdirectory/filtered files/")
+setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
+
 
 library(ggplot2)
 library(grid)
