@@ -1,4 +1,5 @@
-#Script to read the previously generated filtered files and produce 1 table with all the data per locality
+
+
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
 
@@ -35,6 +36,8 @@ multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
   }
 }
 
+
+
 breik = as.Date(c("2001_01_01","2002_01_01","2003_01_01","2004_01_01",
                   "2005_01_01","2006_01_01","2007_01_01","2008_01_01",
                   "2009_01_01","2010_01_01","2011_01_01","2012_01_01",
@@ -48,6 +51,7 @@ xlimites = as.Date(c("1975_01_01","2014_01_01"), "%Y_%m_%d")
 
 
 caudales_25027050 <- read.table("25027050caudales_diarios.txt",sep ="\t")
+  
 
 for(i in 1:length(caudales_25027050$V4)){
   
@@ -103,6 +107,7 @@ caudales_25027050_plot = ggplot(data = caudales_25027050, aes(x=V3, y=V4))+
 
 
 # STATION 25027270
+# LAS FLORES
 # reading files and dealing with NA's
 
 caudales_25027270 <- read.table("25027270caudales_diarios.txt",sep ="\t")
@@ -132,44 +137,6 @@ caudales_25027270_plot = ggplot(data = caudales_25027270, aes(x=V3, y=V4))+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
   scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 7500))
 
-
-
-# FIN
-
-
-# STATION 27037010
-# NECHI
-# reading files and dealing with NA's
-
-
-
-caudales_27037010 <- read.table("27037010caudales_diarios.txt",sep ="\t")
-
-for(i in 1:length(caudales_27037010$V4)){
-  
-  if(is.na(caudales_27037010$V4[i]) == TRUE){
-    
-    caudales_27037010$V4[i] = 5003
-  }
-  
-}
-
-caudales_27037010 <- na.omit(caudales_27037010)
-
-caudales_27037010 <- caudales_27037010[caudales_27037010$V1>1975,]
-
-caudales_27037010$V3 <- as.Date(caudales_27037010$V3, "%Y_%m_%d")
-
-caudales_27037010 <- na.omit(caudales_27037010)
-
-caudales_27037010_plot = ggplot(data = caudales_27037010, aes(x=V3, y=V4))+
-  geom_point() + geom_point(data=caudales_27037010[caudales_27037010$V4==5003,],aes(x=V3, y=V4), colour="red", size=1)+ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                       panel.background = element_blank()) +
-  xlab("Date") +ylab("mean daily discharge ("~"m"^"3"*"/s)") +
-  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 6000,
-           label = "Station 27037010 \n La Esperanza \n Nechi river", size =3)+
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
-  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 7500))
 
 
 # FIN
@@ -253,39 +220,12 @@ caudales_26247030_plot = ggplot(data = caudales_26247030, aes(x=V3, y=V4))+
 
 
 #FIN
+multiplot(caudales_26247030_plot,caudales_25027050_plot, caudales_25027270_plot)
 
-
-
-#load corrected files
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files/filter_and_fill")
 
-caudales_26247030_f <- read.table("filled_caud_26247030.txt",sep ="\t")
-caudales_26247030_f$V1 <- as.Date(caudales_26247030_f$V1, "%Y-%m-%d")
 caudales_25027050_f <- read.table("filled_caud_25027050.txt",sep ="\t")
 caudales_25027050_f$V1 <- as.Date(caudales_25027050_f$V1, "%Y-%m-%d")
-caudales_25027270_f <- read.table("filled_caud_25027270.txt",sep ="\t")
-caudales_25027270_f$V1 <- as.Date(caudales_25027270_f$V1, "%Y-%m-%d")
-
-caudales_26247030_plot_f = ggplot(data = caudales_26247030_f, aes(x=V1, y=V2))+
-  geom_point() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank()) +
-  xlab("Date") +ylab("mean daily discharge ("~"m"^"3"*"/s)") +
-  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 6000,
-           label = "Station 26247030 \n Apavi \n Cauca river", size =3)+
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
-  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 7500))
-
-
-caudales_25027270_plot_f = ggplot(data = caudales_25027270_f, aes(x=V1, y=V2))+
-  geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) +
-  xlab("Date") +ylab("mean daily discharge ("~"m"^"3"*"/s)") +
-  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 6000,
-           label = "Station 25027270 \n Las Flores \n Cauca river", size =3)+
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
-  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 7500))
-
-
 
 caudales_25027050_plot_f = ggplot(data = caudales_25027050_f, aes(x=V1, y=V2))+
   geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank()) +
@@ -295,38 +235,32 @@ caudales_25027050_plot_f = ggplot(data = caudales_25027050_f, aes(x=V1, y=V2))+
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
   scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) +scale_y_continuous(limits = c(0, 7500))
 
+caudales_25027270_f <- read.table("filled_caud_25027270.txt",sep ="\t")
+caudales_25027270_f$V1 <- as.Date(caudales_25027270_f$V1, "%Y-%m-%d")
+
+caudales_25027270_plot_f = ggplot(data = caudales_25027270_f, aes(x=V1, y=V2))+
+  geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank()) +
+  xlab("Date") +ylab("mean daily discharge ("~"m"^"3"*"/s)") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 6000,
+           label = "Station 25027270 \n Las Flores \n Cauca river", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) +scale_y_continuous(limits = c(0, 7500))
 
 
-multiplot(caudales_26247030_plot,caudales_26247030_plot_f,cols=1)
-multiplot(caudales_25027050_plot,caudales_25027050_plot_f,cols=1)
-multiplot(caudales_25027270_plot,caudales_25027270_plot_f,cols=1)
+caudales_26247030_f <- read.table("filled_caud_26247030.txt",sep ="\t")
+caudales_26247030_f$V1 <- as.Date(caudales_26247030_f$V1, "%Y-%m-%d")
 
-multiplot(caudales_25027270_plot_f,caudales_25027050_plot_f,caudales_26247030_plot_f,cols=1)
-multiplot(caudales_25027270_plot,caudales_25027050_plot,caudales_26247030_plot,cols=1)
-
-
-
-multiplot(caudales_26247030_plot,  caudales_25027050_plot,caudales_25027270_plot,caudales_25027640_plot ,cols=1)
-
-
-library(hydroTSM)
-
-#read zoo data
-
-
-
-dataf.26247030 <- read.zoo(caudales_26247030_f, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-
-hydroplot(dataf.26247030,FUN=mean)
-
-#use fun = sum or fun = mean to obtain monthy mean or sum
-hydroplot(dataf.26247030,FUN=sum,ptype = 'ts',pfreq ="dm",tick.tstep="months", lab.tstep="years",lab.fmt= "%Y")
+caudales_26247030_plot_f = ggplot(data = caudales_26247030_f, aes(x=V1, y=V2))+
+  geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank()) +
+  xlab("Date") +ylab("mean daily discharge ("~"m"^"3"*"/s)") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 6000,
+           label = "Station 26247030 \n APAVI \n Cauca river", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) +scale_y_continuous(limits = c(0, 7500))
 
 
 
-dataf.25027050 <- read.zoo(caudales_25027050_f, format = "%Y-%m-%d", header = TRUE,sep = "/t")
+multiplot(caudales_26247030_plot_f,caudales_25027050_plot_f , caudales_25027270_plot_f)
 
-hydroplot(dataf.25027050,FUN=mean)
 
-#use fun = sum or fun = mean to obtain monthy mean or sum
-hydroplot(dataf.25027050,FUN=sum,ptype = 'ts',pfreq ="dm",tick.tstep="months", lab.tstep="years",lab.fmt= "%Y")
+

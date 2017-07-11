@@ -1,4 +1,4 @@
-# FILL NA'S IN THE TIME SERIES
+# FILL NA'S IN THE TIME SERIES of water discharge
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
 
@@ -140,21 +140,19 @@ colnames(data.25027050) <- c("Date","Discharge")
 colnames(data.25027270) <- c("Date","Discharge")
 colnames(data.26247030) <- c("Date","Discharge")
 
-
-
-
 zoo.25027050<- read.zoo(data.25027050, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 zoo.25027270<- read.zoo(data.25027270, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 zoo.26247030<- read.zoo(data.26247030, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 
-m.25027050 <- daily2monthly(zoo.25027050, FUN=sum, na.rm=TRUE)
-m.median.25027050 <- monthlyfunction(m.25027050, FUN=median, na.rm=TRUE)/30
+m.25027050 <- daily2monthly(zoo.25027050, FUN=mean, na.rm=TRUE)
+m.median.25027050 <- monthlyfunction(m.25027050, FUN=median, na.rm=TRUE)
 
-m.25027270 <- daily2monthly(zoo.25027270, FUN=sum, na.rm=TRUE)
-m.median.25027270 <- monthlyfunction(m.25027270, FUN=median, na.rm=TRUE)/30
+m.25027270 <- daily2monthly(zoo.25027270, FUN=mean, na.rm=TRUE)
+m.median.25027270 <- monthlyfunction(m.25027270, FUN=median, na.rm=TRUE)
 
-m.26247030 <- daily2monthly(zoo.26247030, FUN=sum, na.rm=TRUE)
-m.median.26247030 <- monthlyfunction(m.26247030, FUN=median, na.rm=TRUE)/30
+m.26247030 <- daily2monthly(zoo.26247030, FUN=mean, na.rm=TRUE)
+m.median.26247030 <- monthlyfunction(m.26247030, FUN=median, na.rm=TRUE)
+
 
 
 
@@ -168,16 +166,12 @@ for(j in 1:length(data.25027050$Discharge)){
     count2 = 0
     
     temp.date <- data.25027050[j,][[1]]
-    # delete this
-    # temp.date %in% data.25027270$Date
-    # #"1985-06-27"
-    # check that this entry exists in the other dataframe also
-    # 
+
     
-    
+    # if this date exists
     if(temp.date %in% data.26247030$Date == TRUE){
       
-      
+      #if this date exists in another file and is different from 5003
       if(data.26247030[data.26247030$Date == temp.date,][[2]]!=5003){
         
         dis.26247030 <- data.26247030[data.26247030$Date == temp.date,][[2]]
@@ -186,18 +180,38 @@ for(j in 1:length(data.25027050$Discharge)){
       } else{
         m.num <- months.Date(temp.date, abbreviate = TRUE)
         
-        dis.26247030 <-m.median.25027270[m.num][[1]]
+        dis.26247030 <- m.median.26247030[m.num][[1]]
+        count2 = count2 + 1
+        
+        
+      }
+  
+    }
+    
+    
+    if(temp.date %in% data.25027270$Date == TRUE){
+      
+      if(data.25027270[data.25027270$Date == temp.date,][[2]]!=5003){
+        
+        dis.25027270 <- data.25027270[data.25027270$Date == temp.date,][[2]]
+        count2 = count2 + 1
+        
+      } else{
+        m.num <- months.Date(temp.date, abbreviate = TRUE)
+        
+        dis.25027270 <- m.median.25027270[m.num][[1]]
         count2 = count2 + 1
         
         
       }
       
-      
     }
     
-    if(count2 >0){
+    
+    
+    if(count2 == 2){
       
-      data.25027050$Discharge[j]  <- (m.median.25027050[m.num][[1]])*((count2*dis.26247030/(m.median.26247030[m.num][[1]])))/(count2)
+      data.25027050$Discharge[j]  <- (m.median.25027050[m.num][[1]])*(((dis.26247030/(m.median.26247030[m.num][[1]]))+(dis.25027270/(m.median.25027270[m.num][[1]])))/(count2))
       
     } else {
       
@@ -225,8 +239,12 @@ for(j in 1:length(data.25027050$Discharge)){
   
 }
 
-#end of Loop for filtering the data of water discharge for station 25027050
+#REFRESH DATA FROM 25027050
+zoo.25027050<- read.zoo(data.25027050, format = "%Y-%m-%d", header = TRUE,sep = "/t")
+m.25027050 <- daily2monthly(zoo.25027050, FUN=mean, na.rm=TRUE)
+m.median.25027050 <- monthlyfunction(m.25027050, FUN=median, na.rm=TRUE)
 
+#end of Loop for filtering the data of water discharge for station 25027050
 
 
 
@@ -240,16 +258,12 @@ for(j in 1:length(data.26247030$Discharge)){
     count2 = 0
     
     temp.date <- data.26247030[j,][[1]]
-    # delete this
-    #  temp.date %in% data.25027270$Date
-    # "1985-06-27"
-    # check that this entry exists in the other dataframe also
-    # 
-    # 
     
+    
+    # if this date exists
     if(temp.date %in% data.25027050$Date == TRUE){
       
-      
+      #if this date exists in another file and is different from 5003
       if(data.25027050[data.25027050$Date == temp.date,][[2]]!=5003){
         
         dis.25027050 <- data.25027050[data.25027050$Date == temp.date,][[2]]
@@ -258,18 +272,38 @@ for(j in 1:length(data.26247030$Discharge)){
       } else{
         m.num <- months.Date(temp.date, abbreviate = TRUE)
         
-        dis.25027050 <-m.median.25027270[m.num][[1]]
+        dis.25027050 <- m.median.25027050[m.num][[1]]
         count2 = count2 + 1
         
         
       }
       
+    }
+    
+    
+    if(temp.date %in% data.25027270$Date == TRUE){
+      
+      if(data.25027270[data.25027270$Date == temp.date,][[2]]!=5003){
+        
+        dis.25027270 <- data.25027270[data.25027270$Date == temp.date,][[2]]
+        count2 = count2 + 1
+        
+      } else{
+        m.num <- months.Date(temp.date, abbreviate = TRUE)
+        
+        dis.25027270 <- m.median.25027270[m.num][[1]]
+        count2 = count2 + 1
+        
+        
+      }
       
     }
     
-    if(count2 >0){
+    
+    
+    if(count2 == 2){
       
-      data.26247030$Discharge[j]  <- (m.median.26247030[m.num][[1]])*((count2*dis.25027050/(m.median.25027050[m.num][[1]])))/(count2)
+      data.26247030$Discharge[j]  <- (m.median.26247030[m.num][[1]])*(((dis.25027050/(m.median.25027050[m.num][[1]]))+(dis.25027270/(m.median.25027270[m.num][[1]])))/(count2))
       
     } else {
       
@@ -281,7 +315,7 @@ for(j in 1:length(data.26247030$Discharge)){
   }
   
 }
-#data.26247030[data.26247030$Discharge==5003,]
+
 
 for(j in 1:length(data.26247030$Discharge)){
   if(data.26247030$Discharge[j] == 5003){
@@ -296,7 +330,14 @@ for(j in 1:length(data.26247030$Discharge)){
   
   
 }
-#the end of loop
+#REFRESH DATA FROM 26247030
+zoo.26247030 <- read.zoo(data.26247030, format = "%Y-%m-%d", header = TRUE,sep = "/t")
+m.26247030 <- daily2monthly(zoo.26247030, FUN=mean, na.rm=TRUE)
+m.median.26247030 <- monthlyfunction(m.26247030, FUN=median, na.rm=TRUE)
+
+#end of Loop for filtering the data of water discharge for station 26247030
+
+
 
 
 
@@ -310,15 +351,30 @@ for(j in 1:length(data.25027270$Discharge)){
     count2 = 0
     
     temp.date <- data.25027270[j,][[1]]
-    # delete this
-    # temp.date %in% data.26247030$Date
-    # "1985-06-27"
-    # check that this entry exists in the other dataframe also
     
+    
+    # if this date exists
+    if(temp.date %in% data.25027050$Date == TRUE){
+      
+      #if this date exists in another file and is different from 5003
+      if(data.25027050[data.25027050$Date == temp.date,][[2]]!=5003){
+        
+        dis.25027050 <- data.25027050[data.25027050$Date == temp.date,][[2]]
+        count2 = count2 + 1
+        
+      } else{
+        m.num <- months.Date(temp.date, abbreviate = TRUE)
+        
+        dis.25027050 <- m.median.25027050[m.num][[1]]
+        count2 = count2 + 1
+        
+        
+      }
+      
+    }
     
     
     if(temp.date %in% data.26247030$Date == TRUE){
-      
       
       if(data.26247030[data.26247030$Date == temp.date,][[2]]!=5003){
         
@@ -328,18 +384,19 @@ for(j in 1:length(data.25027270$Discharge)){
       } else{
         m.num <- months.Date(temp.date, abbreviate = TRUE)
         
-        dis.26247030 <-m.median.26247030[m.num][[1]]
+        dis.26247030 <- m.median.26247030[m.num][[1]]
         count2 = count2 + 1
         
         
       }
       
-      
     }
     
-    if(count2 >0){
+    
+    
+    if(count2 == 2){
       
-      data.25027270$Discharge[j]  <- (m.median.25027270[m.num][[1]])*((count2*dis.26247030/(m.median.26247030[m.num][[1]])))/(count2)
+      data.25027270$Discharge[j]  <- (m.median.25027270[m.num][[1]])*(((dis.25027050/(m.median.25027050[m.num][[1]]))+(dis.26247030/(m.median.26247030[m.num][[1]])))/(count2))
       
     } else {
       
@@ -360,14 +417,15 @@ for(j in 1:length(data.25027270$Discharge)){
     m.num <- months.Date(temp.date, abbreviate = TRUE)
     
     data.25027270$Discharge[j] <- m.median.25027270[m.num][[1]]
-    #26247030
+    
     
   }
   
   
 }
 
-#THE END Loop for filtering the data of water discharge for station 25027270
+#end of Loop for filtering the data of water discharge for station 25027270
+
 
 
 
@@ -378,18 +436,6 @@ vd = c(getwd(),'/',"filter_and_fill",'/')
 directory = paste(vd,collapse = '')
 dir.create(directory,showWarnings = FALSE)
 
-name1 <- paste(c("filled_caud_","25027270",".txt"),collapse = '')
-
-name1 <- paste(c(directory,name1),collapse = '')
-
-write.table(data.25027270, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
-
-
-name1 <- paste(c("filled_caud_","26247030",".txt"),collapse = '')
-
-name1 <- paste(c(directory,name1),collapse = '')
-
-write.table(data.26247030, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
 
 
 name1 <- paste(c("filled_caud_","25027050",".txt"),collapse = '')
@@ -397,6 +443,18 @@ name1 <- paste(c("filled_caud_","25027050",".txt"),collapse = '')
 name1 <- paste(c(directory,name1),collapse = '')
 
 write.table(data.25027050, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
+
+name1 <- paste(c("filled_caud_","26247030",".txt"),collapse = '')
+
+name1 <- paste(c(directory,name1),collapse = '')
+
+write.table(data.26247030, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
+
+name1 <- paste(c("filled_caud_","25027270",".txt"),collapse = '')
+
+name1 <- paste(c(directory,name1),collapse = '')
+
+write.table(data.25027270, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
 
 
 

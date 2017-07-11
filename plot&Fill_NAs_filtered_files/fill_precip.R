@@ -1,7 +1,10 @@
-# FILL NA'S IN THE TIME SERIES
+# FILL NA'S IN THE TIME SERIES - water discharge
+# Here I will plot the time series and check where they have NA's and compare among stations
+# After thaat I will fitler the water discharge data and display it
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
 Sys.setlocale("LC_TIME", "English")
+
 #load libraries
 library(ggplot2)
 library(grid)
