@@ -13,6 +13,12 @@ library(hydroTSM)
 #read water discharge from file
 data.25027050 <- read.table("25027050caudales_diarios.txt",sep ="\t")
 
+data.25027050.raw <- na.omit(data.25027050)
+data.25027050.raw <- data.25027050.raw[data.25027050.raw$V1>1975,]
+data.25027050.raw$V3 <- as.Date(data.25027050.raw$V3, "%Y_%m_%d")
+data.25027050.raw <- data.25027050.raw[,-1]
+data.25027050.raw <- data.25027050.raw[,-1]
+
 
 #Loop to find NA's and replace with a constant value, in this case 5003 was chosen
 for(i in 1:length(data.25027050$V4)){
@@ -68,6 +74,12 @@ data.25027050 <- na.omit(data.25027050)
 
 data.26247030 <- read.table("26247030caudales_diarios.txt",sep ="\t")
 
+data.26247030.raw <- na.omit(data.26247030)
+data.26247030.raw <- data.26247030.raw[data.26247030.raw$V1>1975,]
+data.26247030.raw$V3 <- as.Date(data.26247030.raw$V3, "%Y_%m_%d")
+data.26247030.raw <- data.26247030.raw[,-1]
+data.26247030.raw <- data.26247030.raw[,-1]
+
 
 
 for(i in 1:length(data.26247030$V4)){
@@ -104,6 +116,14 @@ data.26247030 <- na.omit(data.26247030)
 # reading files and dealing with NA's
 
 data.25027270 <- read.table("25027270caudales_diarios.txt",sep ="\t")
+
+
+data.25027270.raw <- na.omit(data.25027270)
+data.25027270.raw <- data.25027270.raw[data.25027270.raw$V1>1975,]
+data.25027270.raw$V3 <- as.Date(data.25027270.raw$V3, "%Y_%m_%d")
+data.25027270.raw <- data.25027270.raw[,-1]
+data.25027270.raw <- data.25027270.raw[,-1]
+
 for(i in 1:length(data.25027270$V4)){
   
   if(is.na(data.25027270$V4[i]) == TRUE){
@@ -130,30 +150,26 @@ data.25027270 <- na.omit(data.25027270)
 
 #END data.25027270
 
-
-
+colnames(data.25027050) <- c("Date","Discharge")
+colnames(data.26247030) <- c("Date","Discharge")
+colnames(data.25027270) <- c("Date","Discharge")
 
 #Here find monthly statistics for all of the data
 
-#assign specific names to columns of each dataframe
-colnames(data.25027050) <- c("Date","Discharge")
-colnames(data.25027270) <- c("Date","Discharge")
-colnames(data.26247030) <- c("Date","Discharge")
-
-zoo.25027050<- read.zoo(data.25027050, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-zoo.25027270<- read.zoo(data.25027270, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-zoo.26247030<- read.zoo(data.26247030, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-
+colnames(data.25027050.raw) <- c("Date","Discharge")
+zoo.25027050<- read.zoo(data.25027050.raw, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 m.25027050 <- daily2monthly(zoo.25027050, FUN=mean, na.rm=TRUE)
 m.median.25027050 <- monthlyfunction(m.25027050, FUN=median, na.rm=TRUE)
 
-m.25027270 <- daily2monthly(zoo.25027270, FUN=mean, na.rm=TRUE)
-m.median.25027270 <- monthlyfunction(m.25027270, FUN=median, na.rm=TRUE)
-
+colnames(data.26247030.raw) <- c("Date","Discharge")
+zoo.26247030<- read.zoo(data.26247030.raw, format = "%Y-%m-%d", header = TRUE,sep = "/t")
 m.26247030 <- daily2monthly(zoo.26247030, FUN=mean, na.rm=TRUE)
 m.median.26247030 <- monthlyfunction(m.26247030, FUN=median, na.rm=TRUE)
 
-
+colnames(data.25027270.raw) <- c("Date","Discharge")
+zoo.25027270<- read.zoo(data.25027270.raw, format = "%Y-%m-%d", header = TRUE,sep = "/t")
+m.25027270 <- daily2monthly(zoo.25027270, FUN=mean, na.rm=TRUE)
+m.median.25027270 <- monthlyfunction(m.25027270, FUN=median, na.rm=TRUE)
 
 
 #start Loop for filtering the data of water discharge for station 25027050
