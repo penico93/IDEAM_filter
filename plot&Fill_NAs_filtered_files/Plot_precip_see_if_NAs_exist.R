@@ -1,9 +1,46 @@
-#Script for checking and plotting if there are NA's within the dailisy sediment transport data
-
-
-# FILL NA'S IN THE TIME SERIES of sed transp
+#Script for checking and plotting if there are NA's within the precipitation data
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
+
+Sys.setlocale("LC_TIME", "English")
+
+
+multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
+  require(grid)
+  
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots == 1) {
+    print(plots[[1]])
+    
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+
+breik = as.Date(c("2001_01_01","2002_01_01","2003_01_01","2004_01_01",
+                  "2005_01_01","2006_01_01","2007_01_01","2008_01_01",
+                  "2009_01_01","2010_01_01","2011_01_01","2012_01_01",
+                  "2013_01_01","2014_01_01","2015_01_01"), "%Y_%m_%d")
+
+xlimites = as.Date(c("1975_01_01","2015_12_31"), "%Y_%m_%d")
 
 #load libraries
 library(ggplot2)
@@ -12,274 +49,173 @@ library(gridExtra)
 library(zoo)
 library(hydroTSM)
 library(lubridate)
-# START data.25027050
-#read sediment transport from file
-data.25027050 <- read.table("25027050trans_sed_diario.txt",sep ="\t")
+
+# START data.25020480
+#read rainfall data - 25020480_precipitacion_total_diaria
+data.25020480 <- read.table("25020480_precipitacion_total_diaria.txt",sep ="\t")
 
 
 #Loop to find NA's and replace with a constant value, in this case 5003 was chosen
-for(i in 1:length(data.25027050$V4)){
+for(i in 1:length(data.25020480$V4)){
   
-  if(is.na(data.25027050$V4[i]) == TRUE){
+  if(is.na(data.25020480$V4[i]) == TRUE){
     
-    data.25027050$V4[i] = 5003
+    data.25020480$V4[i] = 222.9876
   }
   
   
 }
 
 #erase 
-data.25027050 <- na.omit(data.25027050)
+data.25020480 <- na.omit(data.25020480)
 
-data.25027050 <- data.25027050[data.25027050$V1>1975,]
+data.25020480 <- data.25020480[data.25020480$V1>1975,]
 
-data.25027050$V3 <- as.Date(data.25027050$V3, "%Y_%m_%d")
+data.25020480$V3 <- as.Date(data.25020480$V3, "%Y_%m_%d")
 
-# a sequence of all the years in  1994
-dates.1994 <- seq( as.Date("1994_01_01","%Y_%m_%d"), as.Date("1994_12_31","%Y_%m_%d"), by="+1 day")
 
-# a dataframe of four columns and length(dates.1994) or 365 number of rows
-df.1994 <- data.frame(matrix(ncol = 4, nrow = length(dates.1994)))
+p_25020480_plot = ggplot(data = data.25020480, aes(x=V3, y=V4))+
+  geom_point() + geom_point(data=data.25020480[data.25020480$V4==222.9876,],aes(x=V3, y=V4), colour="red", size=1)+ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                                                                                              panel.background = element_blank()) +
+  xlab("Date") +ylab("Daily Precipitation [mm/s]") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 180,
+           label = "Station 25020480 \n Los Pájaros \n Ciénaga de Ayapel", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 240))
 
-for(d in 1:length(dates.1994)){
+# END data.25020480
+
+# START data.25020780
+#read rainfall data - 25020780_precipitacion_total_diaria
+data.25020780 <- read.table("25020780_precipitacion_total_diaria.txt",sep ="\t")
+
+
+#Loop to find NA's and replace with a constant value, in this case 5003 was chosen
+for(i in 1:length(data.25020780$V4)){
   
-  df.1994[d,1] <- 2011
-  df.1994[d,2] <- d
-  df.1994[d,3] <- toString(dates.1994[d])
-  df.1994[d,4] <- 5003
-  
-}
-
-
-
-colnames(df.1994) <- colnames(data.25027050)
-
-data.25027050 <- rbind(data.25027050,df.1994)
-data.25027050 <- data.25027050[,-1]
-data.25027050 <- data.25027050[,-1]
-
-data.25027050 <- na.omit(data.25027050)
-
-
-
-plot(data.25027050$V3,data.25027050$V4)
-
-# END data.25027050
-
-
-
-
-### Start data 26247030
-
-data.26247030 <- read.table("26247030trans_sed_diario.txt",sep ="\t")
-
-
-
-for(i in 1:length(data.26247030$V4)){
-  
-  if(is.na(data.26247030$V4[i]) == TRUE){
+  if(is.na(data.25020780$V4[i]) == TRUE){
     
-    data.26247030$V4[i] = 5003
-  }
-  
-}
-
-data.26247030 <- na.omit(data.26247030)
-
-data.26247030 <- data.26247030[data.26247030$V1>1975,]
-
-data.26247030$V3 <- as.Date(data.26247030$V3, "%Y_%m_%d")
-
-data.26247030 <- data.26247030[,-1]
-data.26247030 <- data.26247030[,-1]
-
-data.26247030 <- na.omit(data.26247030)
-
-
-plot(data.26247030$V3,data.26247030$V4)
-#FIN
-
-
-
-#END data.26247030
-
-
-
-#START data.25027270
-
-# STATION 25027270
-# reading files and dealing with NA's
-
-data.25027270 <- read.table("25027270caudales_diarios.txt",sep ="\t")
-for(i in 1:length(data.25027270$V4)){
-  
-  if(is.na(data.25027270$V4[i]) == TRUE){
-    
-    data.25027270$V4[i] = 5003
-  }
-  
-}
-
-data.25027270 <- na.omit(data.25027270)
-
-data.25027270 <- data.25027270[data.25027270$V1>1975,]
-
-data.25027270$V3 <- as.Date(data.25027270$V3, "%Y_%m_%d")
-
-data.25027270 <- data.25027270[,-1]
-data.25027270 <- data.25027270[,-1]
-
-data.25027270 <- na.omit(data.25027270)
-
-plot(data.25027270$V3,data.25027270$V4)
-# FIN
-
-
-#END data.25027270
-
-
-
-
-#Here find monthly statistics for all of the data
-
-#assign specific names to columns of each dataframe
-colnames(data.25027050) <- c("Date","sed_trans")
-colnames(data.25027270) <- c("Date","sed_trans")
-colnames(data.26247030) <- c("Date","sed_trans")
-
-
-
-
-zoo.25027050<- read.zoo(data.25027050, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-zoo.25027270<- read.zoo(data.25027270, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-zoo.26247030<- read.zoo(data.26247030, format = "%Y-%m-%d", header = TRUE,sep = "/t")
-
-m.25027050 <- daily2monthly(zoo.25027050, FUN=sum, na.rm=TRUE)
-m.median.25027050 <- monthlyfunction(m.25027050, FUN=median, na.rm=TRUE)/30
-
-m.25027270 <- daily2monthly(zoo.25027270, FUN=sum, na.rm=TRUE)
-m.median.25027270 <- monthlyfunction(m.25027270, FUN=median, na.rm=TRUE)/30
-
-m.26247030 <- daily2monthly(zoo.26247030, FUN=sum, na.rm=TRUE)
-m.median.26247030 <- monthlyfunction(m.26247030, FUN=median, na.rm=TRUE)/30
-
-
-
-#start Loop for filtering the data of water sed_trans for station 25027050
-
-for(j in 1:length(data.25027050$sed_trans)){
-  
-  
-  if(data.25027050$sed_trans[j] == 5003){
-    count1 = 0
-    count2 = 0
-    
-    temp.date <- data.25027050[j,][[1]]
-    # delete this
-    # temp.date %in% data.25027270$Date
-    # #"1985-06-27"
-    # check that this entry exists in the other dataframe also
-    # 
-    
-    
-    if(temp.date %in% data.25027270$Date == TRUE){
-      
-      
-      if(data.25027270[data.25027270$Date == temp.date,][[2]]!=5003){
-        m.num <- month(temp.date,abbr=TRUE,label = TRUE)
-        dis.25027270 <- data.25027270[data.25027270$Date == temp.date,][[2]]
-        count2 = count2 + 1
-        
-      } else{
-        m.num <- month(temp.date,abbr=TRUE,label = TRUE)
-        
-        dis.25027270 <- m.median.25027270[m.num][[1]]
-        count2 = count2 + 1
-        
-        
-      }
-      
-      
-    }
-    
-    if(count2 >0){
-      
-      data.25027050$sed_trans[j]  <- (m.median.25027050[m.num][[1]])*((count2*dis.25027270/(m.median.25027270[m.num][[1]])))/(count2)
-      
-    } else {
-      
-      data.25027050$sed_trans[j]   <- m.median.25027050[m.num][[1]]
-      
-    }
-    
-    
-  }
-  
-}
-
-
-for(j in 1:length(data.25027050$sed_trans)){
-  if(data.25027050$sed_trans[j] == 5003){
-    
-    temp.date <- data.25027050[j,][[1]]
-    m.num <- months.Date(temp.date, abbreviate = TRUE)
-    
-    data.25027050$sed_trans[j] <- m.median.25027050[m.num][[1]]
-    
-    
+    data.25020780$V4[i] = 222.9876
   }
   
   
 }
 
-#end of Loop for filtering the data of water sed_trans for station 25027050
-#start Loop for filtering the data of water sed_trans for station 25027270
+#erase 
+data.25020780 <- na.omit(data.25020780)
+
+data.25020780 <- data.25020780[data.25020780$V1>1975,]
+
+data.25020780$V3 <- as.Date(data.25020780$V3, "%Y_%m_%d")
 
 
-for(j in 1:length(data.25027270$sed_trans)){
-  if(data.25027270$sed_trans[j] == 5003){
+p_25020780_plot = ggplot(data = data.25020780, aes(x=V3, y=V4))+
+  geom_point() + geom_point(data=data.25020780[data.25020780$V4==222.9876,],aes(x=V3, y=V4), colour="red", size=1)+ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                                                                                          panel.background = element_blank()) +
+  xlab("Date") +ylab("Daily Precipitation [mm/s]") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 180,
+           label = "Station 25020780 \n Cecilia \n Ciénaga de Ayapel", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 240))
+
+# END data.25020780
+
+
+
+# START data.25025150
+#read rainfall data - 25025150_precipitacion_total_diaria
+data.25025150 <- read.table("25025150_precipitacion_total_diaria.txt",sep ="\t")
+
+
+#Loop to find NA's and replace with a constant value, in this case 5003 was chosen
+for(i in 1:length(data.25025150$V4)){
+  
+  if(is.na(data.25025150$V4[i]) == TRUE){
     
-    temp.date <- data.25027270[j,][[1]]
-    m.num <- months.Date(temp.date, abbreviate = TRUE)
-    
-    data.25027270$sed_trans[j] <- m.median.25027270[m.num][[1]]
-    
-    
+    data.25025150$V4[i] = 222.9876
   }
   
   
 }
 
-#end of Loop for filtering the data of water sed_trans for station 25027270
+#erase 
+data.25025150 <- na.omit(data.25025150)
+
+data.25025150 <- data.25025150[data.25025150$V1>1975,]
+
+data.25025150$V3 <- as.Date(data.25025150$V3, "%Y_%m_%d")
 
 
-#data.26247030[data.26247030$sed_trans==5003,]
+p_25025150_plot = ggplot(data = data.25025150, aes(x=V3, y=V4))+
+  geom_point() + geom_point(data=data.25025150[data.25025150$V4==222.9876,],aes(x=V3, y=V4), colour="red", size=1)+ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                                                                                          panel.background = element_blank()) +
+  xlab("Date") +ylab("Daily Precipitation [mm/s]") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 180,
+           label = "Station 25025150 \n Ayapel \n Ciénaga de Ayapel", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 240))
 
-vd = c(getwd(),'/',"filter_and_fill",'/')
-directory = paste(vd,collapse = '')
-dir.create(directory,showWarnings = FALSE)
-
-
-
-name1 <- paste(c("filled_sedTRANS_","25027270",".txt"),collapse = '')
-
-name1 <- paste(c(directory,name1),collapse = '')
-
-write.table(data.25027270, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
+# END data.25025150
 
 
-#data.26247030[data.26247030$sed_trans==5003,]
-
-vd = c(getwd(),'/',"filter_and_fill",'/')
-directory = paste(vd,collapse = '')
-dir.create(directory,showWarnings = FALSE)
+multiplot(p_25025150_plot,p_25020780_plot,p_25020480_plot, cols=1)
 
 
 
-name1 <- paste(c("filled_sedTRANS_","25027050",".txt"),collapse = '')
 
-name1 <- paste(c(directory,name1),collapse = '')
+#Plot filtered filled files also
 
-write.table(data.25027050, file = name1, sep ="\t",row.names=FALSE,col.names=FALSE)
+setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files/filter_and_fill")
 
 
+# START data.25020480_f
+data.25020480_f <- read.table("filled_precipitation_25020480.txt",sep ="\t")
+
+data.25020480_f$V1 <- as.Date(data.25020480_f$V1, "%Y-%m-%d")
+
+
+p_25020480_plot_f = ggplot(data = data.25020480_f, aes(x=V1, y=V2))+
+  geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) +
+  xlab("Date") +ylab("Daily Precipitation [mm/s]") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 180,
+           label = "Station 25020480 \n Los Pájaros \n Ciénaga de Ayapel", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 240))
+
+# END data.25020480_f
+
+# START data.25020780_f
+data.25020780_f <- read.table("filled_precipitation_25020780.txt",sep ="\t")
+
+data.25020780_f$V1 <- as.Date(data.25020780_f$V1, "%Y-%m-%d")
+
+
+p_25020780_plot_f = ggplot(data = data.25020780_f, aes(x=V1, y=V2))+
+  geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) +
+  xlab("Date") +ylab("Daily Precipitation [mm/s]") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 180,
+           label = "Station 25020780 \n Cecilia \n Ciénaga de Ayapel", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 240))
+
+# END data.25020780_f
+
+# START data.25025150_f
+data.25025150_f <- read.table("filled_precipitation_25025150.txt",sep ="\t")
+
+data.25025150_f$V1 <- as.Date(data.25025150_f$V1, "%Y-%m-%d")
+
+
+p_25025150_plot_f = ggplot(data = data.25025150_f, aes(x=V1, y=V2))+
+  geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) +
+  xlab("Date") +ylab("Daily Precipitation [mm/s]") +
+  annotate("text", x = as.Date("2005_01_01", "%Y_%m_%d"), y = 180,
+           label = "Station 25025150 \n Ayapel \n Ciénaga de Ayapel", size =3)+
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1), axis.text.x = element_text(angle=90))+
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year", limits = xlimites) + scale_y_continuous(limits = c(0, 240))
+
+# END data.25025150_f
+
+
+
+multiplot(p_25025150_plot_f,p_25020780_plot_f,p_25020480_plot_f, cols=1)

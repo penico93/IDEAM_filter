@@ -1,4 +1,5 @@
-
+#PLOT TIMES SERIES OF WATER DISCHARGE TO SEE {detect} WHERE THERE ARE NA's
+#ALSO plot filtered and filled times series
 
 
 setwd("E:/Sedimentology/R hydrology/Rdirectory/Data/filtered files")
